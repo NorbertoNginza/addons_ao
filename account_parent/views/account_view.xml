@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<record id="view_account_form_inherit" model="ir.ui.view">
+        <field name="name">account.account.form</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+        	<field name="code" position="after">
+        		<field name="parent_id" domain="[('internal_type','=','view')]" context="{'show_parent_account':True}"/>
+        	</field>
+        </field>
+    </record>
+    
+    <record id="view_account_tree" model="ir.ui.view">
+            <field name="name">account.account.tree</field>
+            <field name="model">account.account</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Chart of accounts" toolbar="1" colors="blue:internal_type=='view'">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="parent_id" />
+                    <field name="user_type_id"/>
+                    <field name="internal_type" invisible="1"/>
+                    <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency"/>
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+    
+    <record id="account.action_account_form" model="ir.actions.act_window">
+    	<field name="context">{'show_parent_account':True}</field>
+    </record>
+    
+    <record id="open_view_account_tree" model="ir.actions.act_window">
+        <field name="name">Account Structure</field>
+        <field name="res_model">account.account</field>
+        <field name="view_type">tree</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_account_tree"/>
+        <field name="domain">[('parent_id','=',False)]</field>
+        <field name="context">{'show_parent_account':True}</field>
+        <!--<field name="search_view_id" ref="view_employee_filter"/>-->
+    </record>
+    <menuitem action="open_view_account_tree" id="menu_open_view_account_tree" 
+    		parent="account.menu_finance_entries" sequence="21"/>
+
+    <menuitem action="account.action_account_type_form" id="menu_action_account_type_form" 
+    		parent="account.account_account_menu" sequence="1"/>
+</data>
+</openerp>
